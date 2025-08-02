@@ -3,7 +3,10 @@
 //
 #include "library.h"
 
-void library::insertBook(string title, string author, string genre, string date int priority)
+#include <iostream>
+#include <ostream>
+
+void library::insertBook(string title, string author, string genre, string date, string publisher int priority)
 {
     if (bookToAuthor.find(title) == bookToAuthor.end())
     {
@@ -35,17 +38,126 @@ void library::insertBook(string title, string author, string genre, string date 
     }
 
     string uniqueBook = title + " " + author;
-    attributes[uniqueBook] = {author, genre, date};
+    bookToPriority[uniqueBook] = priority;
+    attributes[uniqueBook] = {author, genre, publisher, date};
 
     if (bookGraph.find(uniqueBook) == bookGraph.end())
     {
-        int length = bookGraph.size();
+        bookGraph[uniqueBook] = {};
+        for (auto it = bookGraph.begin(); it != bookGraph.end(); it++)
+        {
+            string key = it->first;
+            vector <pair<string, double>> value = it -> second;
+            vector<string> details = attributes[key];
+            vector<string> current = attributes[uniqueBook];
+            double simscore = 0;
+            if (details[0] == current[0])
+            {
+                simscore += 7;
+            }
+            if (details[1] == current[1])
+            {
+                simscore += 10;
+            }
+            if (details[2] == current[2])
+            {
+                simscore += 1;
+            }
 
+            int timediff = abs(stoi(details[3]) - stoi(current[3]));
+
+            simscore -= timediff / 10.0;
+
+            value.push_back(make_pair(uniqueBook, simscore));
+
+            bookGraph[uniqueBook].push_back(make_pair(it -> first, simscore));
+        }
     }
 
 }
 
-string library::topBook()
+void library::topBook()
 {
     vector<pair<string, string>> books = priorityToBook[maxHeap[0]];
+    for (int i = 0; i < books.size(); i++)
+    {
+        cout << books[i].first << ", " << books[i].second << endl;
+    }
+}
+
+void library::viewLibrary()
+{
+    int counter = 1;
+    for (auto it = bookToPriority.begin(); it != bookToPriority.end(); it++)
+    {
+        string book = it -> first;
+        int index = book.rfind(' ');
+        string title = book.substr(0, index);
+        string author = book.substr(index + 1);
+        cout<<counter<<". "<< title << ", " << author << endl;
+        counter++;
+    }
+}
+
+vector<string> library::examineBook(string title, string author)
+{
+    string id = title + " " + author;
+    int most = -100;
+    int least = 100;
+    int maxindex;
+    int minindex;
+    vector<pair<string, double>> compare = bookGraph[id];
+    if (compare.size() > 1)
+    {
+        cout << "Title: " << title << endl;
+        cout << "Author: " << attributes[id][0] << endl;
+        cout << "Genre: " << attributes[id][1] << endl;
+        cout << "Publisher: " << attributes[id][2] << endl;
+        cout << "Publication Year: " << attributes[id][3] << endl;
+
+        for (int i = 0; i < compare.size(); i++)
+        {
+            string book = compare[i].first;
+            double simscore = compare[i].second;
+            if (simscore > most)
+            {
+                most = simscore;
+                maxindex = i;
+            }
+            if (simscore < least)
+            {
+                least = simscore;
+                minindex = i;
+            }
+        }
+
+        string mostsimilar = compare[maxindex].first;
+        string leastsimilar = compare[minindex].first;
+
+        // finish formatting and printing
+
+    }
+    else
+    {
+        cout << "Title: " << title << endl;
+        cout << "Author: " << attributes[id][0] << endl;
+        cout << "Genre: " << attributes[id][1] << endl;
+        cout << "Publisher: " << attributes[id][2] << endl;
+        cout << "Publication Year: " << attributes[id][3] << endl;
+        return {};
+    }
+
+}
+
+void library::removeBook(string title, string author)
+{
+    /*/
+    map<string, vector<string>> bookToAuthor;
+    map<int, vector<pair<string, string>>> priorityToBook;
+    map<string, int> bookToPriority;
+    map<string, vector<pair<string, double>> > bookGraph;
+    vector<int> maxHeap;
+    map<string, vector<string>> attributes;
+    /*/
+
 }

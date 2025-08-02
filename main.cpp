@@ -12,6 +12,7 @@ struct Book {
     string title;
     string authors;
     string description;
+    string category;
     string publisher;
     int price;
     string monthPublished;
@@ -28,19 +29,46 @@ int main()
         for (auto& row : reader) {
             Book b;
 
+            //extract title
             b.title = row["title"].get<string>();
-            b.authors = row["authors"].get<string>();
+
+            //extract first author and exclude "By "
+            string rawAuthors = row["authors"].get<string>();
+            size_t byPos = rawAuthors.find("By ");
+            if (byPos != string::npos) {
+                rawAuthors = rawAuthors.substr(byPos + 3);
+            }
+            size_t commaPos = rawAuthors.find(", ");
+            if (commaPos != string::npos) {
+                b.authors = rawAuthors.substr(0, commaPos);
+            } else {
+                b.authors = rawAuthors; 
+            }
+
+            //extract description
             b.description = row["description"].get<string>();
+
+            //extract publisher
             b.publisher = row["publisher"].get<string>();
 
+            //extract first category
+            string rawCategory = row["category"].get<string>();
+            size_t commaPos = rawCategory.find(',');
+            if (commaPos != string::npos) {
+                b.category = rawCategory.substr(0, commaPos);
+            } else {
+                b.category = rawCategory;
+            }
+            
+            //extract price
             try {
                 b.price = row["price"].get<int>();
             } catch (...) {
                 b.price = 0;
             }
 
+            //extract monthPublished and yearPublished
             b.monthPublished = row["monthPublished"].get<>();
-
             try {
                 b.yearPublished = row["yearPublished"].get<int>();
             } catch (...) {

@@ -3,10 +3,10 @@
 //
 #include "library.h"
 #include <iostream>
-#include <sstream>
-#include <fstream>
 #include <vector>
+#include "csv.hpp"  
 using namespace std;
+using namespace csv;  
 
 struct Book {
     string title;
@@ -18,63 +18,56 @@ struct Book {
     int yearPublished;
 };
 
-Book parseBookCSV(const string& line) {
-    stringstream ss(line);
-    string token;
-    Book book;
-
-    getline(ss, book.title, ','); //title
-    
-    getline(ss, book.authors, ','); //authors
-
-    getline(ss, book.description, ','); //description
-
-    getline(ss, book.publisher, ','); //publisher
-
-    getline(ss, token, ','); //price
-    book.price = stoi(token);
-
-    getline(ss, book.monthPublished, ','); //monthPublished
-
-    getline(ss, token, ','); //yearPublished
-    book.yearPublished = stoi(token);
-
-    return book;
-}
-
 int main()
 {
-    ifstream file("BooksDatasetClean.csv");
-    if (!file.is_open()) {
-        cerr << "Error opening file." << endl;
+    vector<Book> books;
+
+    try {
+        CSVReader reader("BooksDatasetClean.csv");
+
+        for (auto& row : reader) {
+            Book b;
+
+            b.title = row["title"].get<string>();
+            b.authors = row["authors"].get<string>();
+            b.description = row["description"].get<string>();
+            b.publisher = row["publisher"].get<string>();
+
+            try {
+                b.price = row["price"].get<int>();
+            } catch (...) {
+                b.price = 0;
+            }
+
+            b.monthPublished = row["monthPublished"].get<>();
+
+            try {
+                b.yearPublished = row["yearPublished"].get<int>();
+            } catch (...) {
+                b.yearPublished = 0;
+            }
+
+            books.push_back(b);
+        }
+    } catch (const exception& e) {
+        cerr << "Error reading CSV file: " << e.what() << endl;
         return 1;
     }
 
-    vector<Book> books;
-    string line;
-
-    getline(file, line);
-
-    while (getline(file, line)) {
-        if (line.empty()) continue;
-        books.push_back(parseBookCSV(line));
-    }
-
-    file.close();
-
     library booklibrary;
+    // You can now insert books into your library like:
     // for (const auto& b : books) {
     //     booklibrary.insertBook(b.title, b.authors, b.description, b.publisher, b.price, b.monthPublished, b.yearPublished);
     // }
 
-    cout << "Welcome to Readify, your personal book storage and recommendation tool!";
+    cout << "Welcome to Readify, your personal book storage and recommendation tool!" << endl;
     cout << "Menu" << endl;
     cout << "1. Book Search" << endl;
     cout << "2. Open Library" << endl;
     cout << "3. Exit Application" << endl;
     cout << "\n";
     bool open = true;
-    
+    string line;
 
     while (open)
     {
@@ -104,7 +97,7 @@ int main()
             }
             else if (line == "c")
             {
-                cout << "Please provide the title and author of the book you wish to remove in the following format: title, author";
+                cout << "Please provide the title and author of the book you wish to remove in the following format: title, author" << endl;
                 getline(cin, line);
                 int space = line.find(' ');
                 string title = line.substr(0, space - 1);
@@ -113,7 +106,7 @@ int main()
             }
             else if (line == "d")
             {
-                cout << "Please provide the title and author of the book you wish to examine in the following format: title, author";
+                cout << "Please provide the title and author of the book you wish to examine in the following format: title, author" << endl;
                 getline(cin, line);
                 int space = line.find(' ');
                 string title = line.substr(0, space - 1);
@@ -122,7 +115,7 @@ int main()
             }
             else if (line == "e")
             {
-
+                // Exit library menu, do nothing
             }
         }
         else
@@ -137,6 +130,6 @@ int main()
         cout << "\n";
     }
 
-    cout << "Thank you for using Readify.";
+    cout << "Thank you for using Readify." << endl;
     return 0;
 }

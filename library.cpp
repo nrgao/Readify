@@ -5,8 +5,9 @@
 
 #include <iostream>
 #include <ostream>
+#include <algorithm>
 
-void library::insertBook(string title, string author, string genre, string date, string publisher int priority)
+void library::insertBook(string title, string author, string genre, string date, string publisher, int priority)
 {
     if (bookToAuthor.find(title) == bookToAuthor.end())
     {
@@ -160,4 +161,65 @@ void library::removeBook(string title, string author)
     map<string, vector<string>> attributes;
     /*/
 
+    if (attributes.find(title + " " + author) != attributes.end())
+    {
+        bookToAuthor[title].erase(remove(bookToAuthor[title].begin(), bookToAuthor[title].end(), author), bookToAuthor[title].end());
+        for (auto it = priorityToBook.begin(); it != priorityToBook.end(); it++)
+        {
+            vector<pair<string, string>> &books = it -> second;
+            for (auto it2 = books.begin(); it2 != books.end();)
+            {
+                if (it2 -> first == title && it2 -> second == author)
+                {
+                    it2 = books.erase(it2);
+                }
+                else
+                {
+                    it2++;
+                }
+            }
+        }
+
+        string id = title + " " + author;
+
+        bookToPriority.erase(id);
+        attributes.erase(id);
+        bookGraph.erase(id);
+
+        for (auto it = bookGraph.begin(); it != bookGraph.end(); it++)
+        {
+            vector<pair<string, double>> &books = it -> second;
+            for (auto it2 = books.begin(); it2 != books.end();)
+            {
+                if (it2 -> first == id)
+                {
+                    it2 = books.erase(it2);
+                }
+                else
+                {
+                    it2++;
+                }
+            }
+        }
+
+        int priority = bookToPriority[id];
+        vector<int> newHeap;
+
+        for (int i = 0; i < maxHeap.size(); i++)
+        {
+            if (maxHeap[i] != priority)
+            {
+                newHeap.push_back(priority);
+                int index = newHeap.size() - 1;
+                while (index > 0 && newHeap[index] > newHeap[index / 2])
+                {
+                    int temp = newHeap[index];
+                    newHeap[index] = newHeap[index / 2];
+                    newHeap[index / 2] = temp;
+                    index /= 2;
+                }
+            }
+        }
+        maxHeap = newHeap;
+    }
 }

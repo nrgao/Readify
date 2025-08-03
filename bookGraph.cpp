@@ -55,7 +55,6 @@ vector<string> BookGraph::recommend(string title, string author)
     int simscore;
     int maxscore = -100;
     string maxid;
-    cout << id << endl;
     for (auto it = attributes.begin(); it != attributes.end(); it++)
     {
         simscore = 0;

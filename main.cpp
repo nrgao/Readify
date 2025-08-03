@@ -2,8 +2,10 @@
 // Created by nrg91 on 8/1/2025.
 //
 #include "library.h"
+#include "bookGraph.h"
 #include <iostream>
 #include <vector>
+#include <string>
 #include "include/csv.hpp"
 using namespace std;
 using namespace csv;  
@@ -83,13 +85,16 @@ int main()
     }
 
     library booklibrary;
-    // You can now insert books into your library like:
-    // for (const auto& b : books) {
-    //     booklibrary.insertBook(b.title, b.authors, b.description, b.publisher, b.price, b.monthPublished, b.yearPublished);
-    // }
+    BookGraph bookgraph;
+
+    for (int i = 0; i < books.size(); i++)
+    {
+        Book book = books[i];
+        bookgraph.insert(book.title, book.authors, book.category, to_string(book.yearPublished), book.publisher, book.description);
+    }
 
     Book thing = books[0];
-    booklibrary.insertBook(thing.title, thing.authors, thing.description, to_string(thing.yearPublished), thing.publisher, 100);
+    booklibrary.insertBook(thing.title, thing.authors, thing.category, to_string(thing.yearPublished), thing.publisher, 100);
     booklibrary.insertBook("bob", "bob", "bob", "1000", "bob", 100);
     cout << "Welcome to Readify, your personal book storage and recommendation tool!" << endl;
     cout << "Menu" << endl;
@@ -99,13 +104,33 @@ int main()
     cout << "\n";
     bool open = true;
     string line;
+    int priority;
 
     while (open)
     {
         getline(cin, line);
         if (line == "1")
         {
-            cout << "Please input a book in the following format: (title, author)." << endl;
+            cout << "Please input a book in the following format: (Title, Author)." << endl;
+            getline(cin, line);
+            int space = line.rfind(' ');
+            string title = line.substr(0, space - 1);
+            string author = line.substr(space + 1);
+            vector<string> recbook = bookgraph.recommend(title, author);
+            for (int i = 0; i < recbook.size(); i++)
+                cout << recbook[i] << endl;
+            cout << "Add book to library? (y/n)" << endl;
+            getline(cin, line);
+
+            if (line == "y")
+            {
+                cout << "Please provide a priority level for this book. This value should be an integer between 0 and 100." << endl;
+
+                getline(cin, line);
+                priority = stoi(line);
+                booklibrary.insertBook(recbook[0], recbook[1], recbook[2], recbook[4], recbook[3], priority);
+                cout << "Book succesfully added to library." << endl;
+            }
         }
         else if (line == "2")
         {

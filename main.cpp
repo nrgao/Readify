@@ -88,6 +88,8 @@ int main()
     //     booklibrary.insertBook(b.title, b.authors, b.description, b.publisher, b.price, b.monthPublished, b.yearPublished);
     // }
 
+    Book thing = books[0];
+    booklibrary.insertBook(thing.title, thing.authors, thing.description, to_string(thing.yearPublished), thing.publisher, 100);
     booklibrary.insertBook("bob", "bob", "bob", "1000", "bob", 100);
     cout << "Welcome to Readify, your personal book storage and recommendation tool!" << endl;
     cout << "Menu" << endl;
@@ -128,7 +130,7 @@ int main()
             {
                 cout << "Please provide the title and author of the book you wish to remove in the following format: title, author" << endl;
                 getline(cin, line);
-                int space = line.find(' ');
+                int space = line.rfind(' ');
                 string title = line.substr(0, space - 1);
                 string author = line.substr(space + 1);
                 booklibrary.removeBook(title, author);
@@ -137,7 +139,7 @@ int main()
             {
                 cout << "Please provide the title and author of the book you wish to examine in the following format: title, author" << endl;
                 getline(cin, line);
-                int space = line.find(' ');
+                int space = line.rfind(' ');
                 string title = line.substr(0, space - 1);
                 string author = line.substr(space + 1);
                 booklibrary.examineBook(title, author);

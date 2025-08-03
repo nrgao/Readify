@@ -4,16 +4,20 @@
 
 #ifndef BOOKGRAPH_H
 #define BOOKGRAPH_H
-
+#include <map>
+#include <string>
+#include <vector>
+using namespace std;
 
 class BookGraph
 {
     map<string, vector<pair<string, double>> > data;
     map<string, string> bookdescriptions;
+    map<string, vector<string>> attributes;
 
     public:
     void insert(string title, string author, string genre, string date, string publisher, string description);
-    string recommend(string title, string author);
+    void recommend(string title, string author);
 
 };
 #endif //BOOKGRAPH_H

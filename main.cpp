@@ -4,7 +4,7 @@
 #include "library.h"
 #include <iostream>
 #include <vector>
-#include "csv.hpp"  
+#include "include/csv.hpp"
 using namespace std;
 using namespace csv;  
 
@@ -30,10 +30,10 @@ int main()
             Book b;
 
             //extract title
-            b.title = row["title"].get<string>();
+            b.title = row["Title"].get<string>();
 
             //extract first author and exclude "By "
-            string rawAuthors = row["authors"].get<string>();
+            string rawAuthors = row["Authors"].get<string>();
             size_t byPos = rawAuthors.find("By ");
             if (byPos != string::npos) {
                 rawAuthors = rawAuthors.substr(byPos + 3);
@@ -46,14 +46,14 @@ int main()
             }
 
             //extract description
-            b.description = row["description"].get<string>();
+            b.description = row["Description"].get<string>();
 
             //extract publisher
-            b.publisher = row["publisher"].get<string>();
+            b.publisher = row["Publisher"].get<string>();
 
             //extract first category
-            string rawCategory = row["category"].get<string>();
-            size_t commaPos = rawCategory.find(',');
+            string rawCategory = row["Category"].get<string>();
+            commaPos = rawCategory.find(',');
             if (commaPos != string::npos) {
                 b.category = rawCategory.substr(0, commaPos);
             } else {
@@ -62,15 +62,15 @@ int main()
             
             //extract price
             try {
-                b.price = row["price"].get<int>();
+                b.price = row["Price"].get<int>();
             } catch (...) {
                 b.price = 0;
             }
 
             //extract monthPublished and yearPublished
-            b.monthPublished = row["monthPublished"].get<>();
+            b.monthPublished = row["Publish Date (Month)"].get<>();
             try {
-                b.yearPublished = row["yearPublished"].get<int>();
+                b.yearPublished = row["Publish Date (Year)"].get<int>();
             } catch (...) {
                 b.yearPublished = 0;
             }
@@ -88,6 +88,7 @@ int main()
     //     booklibrary.insertBook(b.title, b.authors, b.description, b.publisher, b.price, b.monthPublished, b.yearPublished);
     // }
 
+    booklibrary.insertBook("bob", "bob", "bob", "1000", "bob", 100);
     cout << "Welcome to Readify, your personal book storage and recommendation tool!" << endl;
     cout << "Menu" << endl;
     cout << "1. Book Search" << endl;

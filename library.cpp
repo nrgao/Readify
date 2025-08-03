@@ -100,7 +100,7 @@ void library::viewLibrary()
     }
 }
 
-vector<string> library::examineBook(string title, string author)
+void library::examineBook(string title, string author)
 {
     string id = title + " " + author;
     int most = -100;
@@ -145,7 +145,6 @@ vector<string> library::examineBook(string title, string author)
         cout << "Genre: " << attributes[id][1] << endl;
         cout << "Publisher: " << attributes[id][2] << endl;
         cout << "Publication Year: " << attributes[id][3] << endl;
-        return {};
     }
 
 }

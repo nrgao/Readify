@@ -15,16 +15,17 @@ class library
 {
     map<string, vector<string>> bookToAuthor;
     map<int, vector<pair<string, string>>> priorityToBook;
-    map<string, vector<string> > bookGraph;
+    map <string, int> bookToPriority;
+    map<string, vector<pair<string, double>> > bookGraph;
     vector<int> maxHeap;
     map<string, vector<string>> attributes;
 
     public:
-    void insertBook(string title, string author, string genre, string date, int priority);
+    void insertBook(string title, string author, string genre, string date, string publisher, int priority);
 
-    string viewLibrary();
+    void viewLibrary();
 
-    string topBook();
+    void topBook();
 
     void removeBook(string title, string author);
 

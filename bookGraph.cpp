@@ -10,40 +10,6 @@ void BookGraph::insert(string title, string author, string genre, string date, s
 {
     string uniqueBook = title + " " + author;
     attributes[uniqueBook] = {author, genre, publisher, date, description};
-    /*/
-    if (data.find(uniqueBook) == data.end())
-    {
-        data[uniqueBook] = {};
-        for (auto it = data.begin(); it != data.end(); it++)
-        {
-            string key = it->first;
-            vector <pair<string, double>> value = it -> second;
-            vector<string> details = attributes[key];
-            vector<string> current = attributes[uniqueBook];
-            double simscore = 0;
-            if (details[0] == current[0])
-            {
-                simscore += 7;
-            }
-            if (details[1] == current[1])
-            {
-                simscore += 10;
-            }
-            if (details[2] == current[2])
-            {
-                simscore += 1;
-            }
-
-            int timediff = abs(stoi(details[3]) - stoi(current[3]));
-
-            simscore -= timediff / 10.0;
-
-            value.push_back(make_pair(uniqueBook, simscore));
-
-            data[uniqueBook].push_back(make_pair(it -> first, simscore));
-        }
-    }
-    /*/
 }
 
 vector<string> BookGraph::recommend(string title, string author)
@@ -92,3 +58,12 @@ vector<string> BookGraph::recommend(string title, string author)
     cout << "Recommended book based on similarity score (Title, Author): " << booktitle << ", "<< authorname<<endl;
     return {booktitle, authorname, attributes[mostsimilar][1], attributes[mostsimilar][2], attributes[mostsimilar][3], attributes[mostsimilar][4]};
 }
+
+vector <string> BookGraph::getAttributes(string id)
+{
+    if (attributes.find(id) != attributes.end())
+        return attributes[id];
+    else
+        return {};
+}
+

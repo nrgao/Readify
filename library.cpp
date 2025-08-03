@@ -79,11 +79,19 @@ void library::insertBook(string title, string author, string genre, string date,
 
 void library::topBook()
 {
-    vector<pair<string, string>> books = priorityToBook[maxHeap[0]];
-    for (int i = 0; i < books.size(); i++)
+    if (!maxHeap.empty())
     {
-        cout << books[i].first << ", " << books[i].second << endl;
+        vector<pair<string, string>> books = priorityToBook[maxHeap[0]];
+        for (int i = 0; i < books.size(); i++)
+        {
+            cout << books[i].first << ", " << books[i].second << endl;
+        }
     }
+    else
+    {
+        cout << "There are no books in your library." << endl;
+    }
+
 }
 
 void library::viewLibrary()
@@ -181,6 +189,9 @@ void library::removeBook(string title, string author)
 
         string id = title + " " + author;
 
+        int priority = bookToPriority[id];
+        vector<int> newHeap;
+
         bookToPriority.erase(id);
         attributes.erase(id);
         bookGraph.erase(id);
@@ -201,14 +212,11 @@ void library::removeBook(string title, string author)
             }
         }
 
-        int priority = bookToPriority[id];
-        vector<int> newHeap;
-
         for (int i = 0; i < maxHeap.size(); i++)
         {
             if (maxHeap[i] != priority)
             {
-                newHeap.push_back(priority);
+                newHeap.push_back(maxHeap[i]);
                 int index = newHeap.size() - 1;
                 while (index > 0 && newHeap[index] > newHeap[index / 2])
                 {

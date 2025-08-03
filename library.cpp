@@ -9,6 +9,14 @@
 
 void library::insertBook(string title, string author, string genre, string date, string publisher, int priority)
 {
+    if (priorityCounter.find(priority) == priorityCounter.end())
+    {
+        priorityCounter[priority] = 1;
+    }
+    else
+    {
+        priorityCounter[priority] += 1;
+    }
     if (bookToAuthor.find(title) == bookToAuthor.end())
     {
         bookToAuthor[title] = {author};
@@ -48,7 +56,7 @@ void library::insertBook(string title, string author, string genre, string date,
         for (auto it = bookGraph.begin(); it != bookGraph.end(); it++)
         {
             string key = it->first;
-            vector <pair<string, double>> value = it -> second;
+            vector <pair<string, double>> &value = it -> second;
             vector<string> details = attributes[key];
             vector<string> current = attributes[uniqueBook];
             double simscore = 0;
@@ -108,56 +116,66 @@ void library::viewLibrary()
     }
 }
 
-void library::examineBook(string title, string author)
+bool library::examineBook(string title, string author)
 {
     string id = title + " " + author;
     int most = -100;
     int least = 100;
     int maxindex;
     int minindex;
-    vector<pair<string, double>> compare = bookGraph[id];
-    if (compare.size() > 1)
-    {
-        cout << "Title: " << title << endl;
-        cout << "Author: " << attributes[id][0] << endl;
-        cout << "Genre: " << attributes[id][1] << endl;
-        cout << "Publisher: " << attributes[id][2] << endl;
-        cout << "Publication Year: " << attributes[id][3] << endl;
-
-        for (int i = 0; i < compare.size(); i++)
+    if (bookGraph.find(id) != bookGraph.end()) {
+        vector<pair<string, double>> compare = bookGraph[id];
+        if (compare.size() > 1)
         {
-            string book = compare[i].first;
-            double simscore = compare[i].second;
-            if (simscore > most)
+            cout << "Title: " << title << endl;
+            cout << "Author: " << attributes[id][0] << endl;
+            cout << "Genre: " << attributes[id][1] << endl;
+            cout << "Publisher: " << attributes[id][2] << endl;
+            cout << "Publication Year: " << attributes[id][3] << endl;
+
+            for (int i = 0; i < compare.size(); i++)
             {
-                most = simscore;
-                maxindex = i;
+                string book = compare[i].first;
+                double simscore = compare[i].second;
+                if (simscore > most)
+                {
+                    most = simscore;
+                    maxindex = i;
+                }
+                if (simscore < least)
+                {
+                    least = simscore;
+                    minindex = i;
+                }
             }
-            if (simscore < least)
-            {
-                least = simscore;
-                minindex = i;
-            }
+
+            string mostsimilar = compare[maxindex].first;
+            string leastsimilar = compare[minindex].first;
+
+            int space = mostsimilar.rfind(' ');
+            string similartitle = mostsimilar.substr(0, space);
+            string similarauthor = mostsimilar.substr(space + 1);
+            space = leastsimilar.rfind(' ');
+            string differenttitle = leastsimilar.substr(0, space);
+            string differentauthor = leastsimilar.substr(space + 1);
+
+            // finish formatting and printing
+
         }
-
-        string mostsimilar = compare[maxindex].first;
-        string leastsimilar = compare[minindex].first;
-
-        // finish formatting and printing
-
+        else
+        {
+            cout << "Title: " << title << endl;
+            cout << "Author: " << attributes[id][0] << endl;
+            cout << "Genre: " << attributes[id][1] << endl;
+            cout << "Publisher: " << attributes[id][2] << endl;
+            cout << "Publication Year: " << attributes[id][3] << endl;
+        }
+        return true;
     }
-    else
-    {
-        cout << "Title: " << title << endl;
-        cout << "Author: " << attributes[id][0] << endl;
-        cout << "Genre: " << attributes[id][1] << endl;
-        cout << "Publisher: " << attributes[id][2] << endl;
-        cout << "Publication Year: " << attributes[id][3] << endl;
-    }
-
+    return false;
 }
 
-void library::removeBook(string title, string author)
+bool library::removeBook(string title, string author)
 {
     /*/
     map<string, vector<string>> bookToAuthor;
@@ -211,7 +229,8 @@ void library::removeBook(string title, string author)
                 }
             }
         }
-
+        priorityCounter[priority] -= 1;
+        int counter = 0;
         for (int i = 0; i < maxHeap.size(); i++)
         {
             if (maxHeap[i] != priority)
@@ -226,7 +245,25 @@ void library::removeBook(string title, string author)
                     index /= 2;
                 }
             }
+            else
+            {
+                if (counter < priorityCounter[priority])
+                {
+                    newHeap.push_back(maxHeap[i]);
+                    int index = newHeap.size() - 1;
+                    while (index > 0 && newHeap[index] > newHeap[index / 2])
+                    {
+                        int temp = newHeap[index];
+                        newHeap[index] = newHeap[index / 2];
+                        newHeap[index / 2] = temp;
+                        index /= 2;
+                    }
+                }
+            }
         }
         maxHeap = newHeap;
+        return true;
     }
+
+    return false;
 }

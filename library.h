@@ -13,6 +13,7 @@ using namespace std;
 
 class library
 {
+    map<int, int> priorityCounter;
     map<string, vector<string>> bookToAuthor;
     map<int, vector<pair<string, string>>> priorityToBook;
     map <string, int> bookToPriority;
@@ -27,9 +28,9 @@ class library
 
     void topBook();
 
-    void removeBook(string title, string author);
+    bool removeBook(string title, string author);
 
-    void examineBook(string title, string author);
+    bool examineBook(string title, string author);
 
 };
 #endif //LIBRARY_H

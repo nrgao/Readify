@@ -17,7 +17,7 @@ class BookGraph
 
     public:
     void insert(string title, string author, string genre, string date, string publisher, string description);
-    void recommend(string title, string author);
+    vector<string> recommend(string title, string author);
 
 };
 #endif //BOOKGRAPH_H

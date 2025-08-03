@@ -97,6 +97,7 @@ int main()
     booklibrary.insertBook(thing.title, thing.authors, thing.category, to_string(thing.yearPublished), thing.publisher, 100);
     booklibrary.insertBook("bob", "bob", "bob", "1000", "bob", 100);
     cout << "Welcome to Readify, your personal book storage and recommendation tool!" << endl;
+    cout << "\n";
     cout << "Menu" << endl;
     cout << "1. Book Search" << endl;
     cout << "2. Open Library" << endl;
@@ -117,61 +118,87 @@ int main()
             string title = line.substr(0, space - 1);
             string author = line.substr(space + 1);
             vector<string> recbook = bookgraph.recommend(title, author);
-            for (int i = 0; i < recbook.size(); i++)
-                cout << recbook[i] << endl;
-            cout << "Add book to library? (y/n)" << endl;
-            getline(cin, line);
-
-            if (line == "y")
+            if (recbook.empty())
             {
-                cout << "Please provide a priority level for this book. This value should be an integer between 0 and 100." << endl;
-
-                getline(cin, line);
-                priority = stoi(line);
-                booklibrary.insertBook(recbook[0], recbook[1], recbook[2], recbook[4], recbook[3], priority);
-                cout << "Book succesfully added to library." << endl;
+                cout << "The provided book is not in our database.";
             }
+            else
+            {
+                for (int i = 0; i < recbook.size(); i++)
+                    cout << recbook[i] << endl;
+                cout << "Add book to library? (y/n)" << endl;
+                getline(cin, line);
+
+                if (line == "y")
+                {
+                    cout << "Please provide a priority level for this book. This value should be an integer between 0 and 100." << endl;
+
+                    getline(cin, line);
+                    priority = stoi(line);
+                    booklibrary.insertBook(recbook[0], recbook[1], recbook[2], recbook[4], recbook[3], priority);
+                    cout << "Book succesfully added to library." << endl;
+                }
+            }
+
         }
-        else if (line == "2")
-        {
-            cout << "Library Options:" << endl;
-            cout << "a. View Books" << endl;
-            cout << "b. Top Book" << endl;
-            cout << "c. Remove Book" << endl;
-            cout << "d. Examine Book" << endl;
-            cout << "e. Exit Library" << endl;
-            cout << "\n";
+        else if (line == "2") {
+            while (line != "e")
+            {
+                cout << "Library Options:" << endl;
+                cout << "a. View Books" << endl;
+                cout << "b. Top Book" << endl;
+                cout << "c. Remove Book" << endl;
+                cout << "d. Examine Book" << endl;
+                cout << "e. Exit Library" << endl;
+                cout << "\n";
 
-            getline(cin, line);
-            if (line == "a")
-            {
-                booklibrary.viewLibrary();
-            }
-            else if (line == "b")
-            {
-                booklibrary.topBook();
-            }
-            else if (line == "c")
-            {
-                cout << "Please provide the title and author of the book you wish to remove in the following format: title, author" << endl;
                 getline(cin, line);
-                int space = line.rfind(' ');
-                string title = line.substr(0, space - 1);
-                string author = line.substr(space + 1);
-                booklibrary.removeBook(title, author);
-            }
-            else if (line == "d")
-            {
-                cout << "Please provide the title and author of the book you wish to examine in the following format: title, author" << endl;
-                getline(cin, line);
-                int space = line.rfind(' ');
-                string title = line.substr(0, space - 1);
-                string author = line.substr(space + 1);
-                booklibrary.examineBook(title, author);
-            }
-            else if (line == "e")
-            {
-                // Exit library menu, do nothing
+                if (line == "a")
+                {
+                    booklibrary.viewLibrary();
+                    cout << "\n";
+                }
+                else if (line == "b")
+                {
+                    booklibrary.topBook();
+                    cout << "\n";
+                }
+                else if (line == "c")
+                {
+                    cout << "Please provide the title and author of the book you wish to remove in the following format: title, author" << endl;
+                    getline(cin, line);
+                    int space = line.rfind(' ');
+                    string title = line.substr(0, space - 1);
+                    string author = line.substr(space + 1);
+                    bool exist = booklibrary.removeBook(title, author);
+                    if (exist == false)
+                    {
+                        cout << "This book does not exist within your library." << endl;
+                    }
+                    else
+                    {
+                        cout << "Book Successfully removed from library." << endl;
+                    }
+                    cout << "\n";
+                }
+                else if (line == "d")
+                {
+                    cout << "Please provide the title and author of the book you wish to examine in the following format: title, author" << endl;
+                    getline(cin, line);
+                    int space = line.rfind(' ');
+                    string title = line.substr(0, space - 1);
+                    string author = line.substr(space + 1);
+                    bool exist = booklibrary.examineBook(title, author);
+                    if (exist == false)
+                    {
+                        cout << "This book does not exist within your library." << endl;
+                    }
+                    cout << "\n";
+                }
+                else if (line == "e")
+                {
+                    // Exit library menu, do nothing
+                }
             }
         }
         else

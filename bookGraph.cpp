@@ -49,6 +49,8 @@ void BookGraph::insert(string title, string author, string genre, string date, s
 vector<string> BookGraph::recommend(string title, string author)
 {
     string id = title + " " + author;
+    if (attributes.find(id) == attributes.end())
+        return {};
     vector<string> current = attributes[id];
     int simscore;
     int maxscore = -100;

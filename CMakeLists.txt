@@ -8,5 +8,7 @@ add_subdirectory(include/internal)
 add_executable(Readify
     main.cpp
         library.h
-        library.cpp)
+        library.cpp
+        bookGraph.cpp
+        bookGraph.h)
 target_link_libraries(Readify csv)

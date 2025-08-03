@@ -96,10 +96,11 @@ int main()
     Book thing = books[0];
     booklibrary.insertBook(thing.title, thing.authors, thing.category, to_string(thing.yearPublished), thing.publisher, 100);
     booklibrary.insertBook("bob", "bob", "bob", "1000", "bob", 100);
+    cout << "\n";
     cout << "Welcome to Readify, your personal book storage and recommendation tool!" << endl;
     cout << "\n";
     cout << "Menu" << endl;
-    cout << "1. Book Search" << endl;
+    cout << "1. Book Recommendation Engine" << endl;
     cout << "2. Open Library" << endl;
     cout << "3. Exit Application" << endl;
     cout << "\n";
@@ -118,14 +119,35 @@ int main()
             string title = line.substr(0, space - 1);
             string author = line.substr(space + 1);
             vector<string> recbook = bookgraph.recommend(title, author);
+            cout << "\n";
+            cout << "Book Details:" << endl;
+            cout << "\n";
             if (recbook.empty())
             {
-                cout << "The provided book is not in our database.";
+                cout << "Unfortunately, the provided book is not in our database.";
             }
             else
             {
                 for (int i = 0; i < recbook.size(); i++)
-                    cout << recbook[i] << endl;
+                    if (i == 0)
+                        cout << "Title: " << recbook[i] << endl;
+                    else if (i == 1)
+                        cout << "Author: " << recbook[i] << endl;
+                    else if (i == 2)
+                        cout << "Genre: " << recbook[i] << endl;
+                    else if (i == 3)
+                        cout << "Publisher: " << recbook[i] << endl;
+                    else if (i == 4)
+                        cout << "Publication Year: " << recbook[i] << endl;
+                    else if (i == 5)
+                    {
+                        if (recbook[i].length() == 0)
+                            cout << "Description: " << "N/A" << endl;
+                        else
+                            cout << "Description: " << recbook[i] << endl;
+                        cout << "\n";
+                    }
+
                 cout << "Add book to library? (y/n)" << endl;
                 getline(cin, line);
 
@@ -207,7 +229,7 @@ int main()
         }
         cout << "\n\n";
         cout << "Menu" << endl;
-        cout << "1. Book Search" << endl;
+        cout << "1. Book Recommendation Engine" << endl;
         cout << "2. Open Library" << endl;
         cout << "3. Exit Application" << endl;
         cout << "\n";

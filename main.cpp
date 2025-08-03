@@ -100,9 +100,10 @@ int main()
     cout << "Welcome to Readify, your personal book storage and recommendation tool!" << endl;
     cout << "\n";
     cout << "Menu" << endl;
-    cout << "1. Book Recommendation Engine" << endl;
-    cout << "2. Open Library" << endl;
-    cout << "3. Exit Application" << endl;
+    cout << "1. Book Search" << endl;
+    cout << "2. Book Recommendation Engine" << endl;
+    cout << "3. Open Library" << endl;
+    cout << "4. Exit Application" << endl;
     cout << "\n";
     bool open = true;
     string line;
@@ -112,6 +113,41 @@ int main()
     {
         getline(cin, line);
         if (line == "1")
+        {
+            cout << "Please input a book in the following format: (Title, Author)." << endl;
+            getline(cin, line);
+            int space = line.rfind(' ');
+            string title = line.substr(0, space - 1);
+            string author = line.substr(space + 1);
+            vector<string> bookdetails = bookgraph.getAttributes(title + " " + author);
+            if (bookdetails.empty())
+            {
+                cout << "Unfortunately, the provided book is not in our database.";
+            }
+            else
+            {
+                cout << "Title: " << title << endl;
+                for (int i = 0; i < bookdetails.size(); i++)
+                    if (i == 0)
+                        cout << "Author: " << bookdetails[i] << endl;
+                    else if (i == 1)
+                        cout << "Genre: " << bookdetails[i] << endl;
+                    else if (i == 2)
+                        cout << "Publisher: " << bookdetails[i] << endl;
+                    else if (i == 3)
+                        cout << "Publication Year: " << bookdetails[i] << endl;
+                    else if (i == 4)
+                    {
+                        if (bookdetails[i].length() == 0)
+                            cout << "Description: " << "N/A" << endl;
+                        else
+                            cout << "Description: " << bookdetails[i] << endl;
+                        cout << "\n";
+                    }
+            }
+
+        }
+        else if (line == "2")
         {
             cout << "Please input a book in the following format: (Title, Author)." << endl;
             getline(cin, line);
@@ -163,7 +199,7 @@ int main()
             }
 
         }
-        else if (line == "2") {
+        else if (line == "3") {
             while (line != "e")
             {
                 cout << "Library Options:" << endl;
@@ -223,15 +259,16 @@ int main()
                 }
             }
         }
-        else
+        else if (line == "4")
         {
             open = false;
         }
         cout << "\n\n";
         cout << "Menu" << endl;
-        cout << "1. Book Recommendation Engine" << endl;
-        cout << "2. Open Library" << endl;
-        cout << "3. Exit Application" << endl;
+        cout << "1. Book Search" << endl;
+        cout << "2. Book Recommendation Engine" << endl;
+        cout << "3. Open Library" << endl;
+        cout << "4. Exit Application" << endl;
         cout << "\n";
     }
 

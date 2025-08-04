@@ -94,8 +94,8 @@ int main()
     }
 
     Book thing = books[0];
-    booklibrary.insertBook(thing.title, thing.authors, thing.category, to_string(thing.yearPublished), thing.publisher, 100);
-    booklibrary.insertBook("bob", "bob", "bob", "1000", "bob", 100);
+    booklibrary.insertBook(thing.title, thing.authors, thing.category, to_string(thing.yearPublished), thing.publisher, thing.description, 100);
+    booklibrary.insertBook("bob", "bob", "bob", "1000", "bob", "",100);
     cout << "\n";
     cout << "Welcome to Readify, your personal book storage and recommendation tool!" << endl;
     cout << "\n";
@@ -126,6 +126,7 @@ int main()
             }
             else
             {
+                cout << "Book Information: \n" << endl;
                 cout << "Title: " << title << endl;
                 for (int i = 0; i < bookdetails.size(); i++)
                     if (i == 0)
@@ -142,7 +143,6 @@ int main()
                             cout << "Description: " << "N/A" << endl;
                         else
                             cout << "Description: " << bookdetails[i] << endl;
-                        cout << "\n";
                     }
             }
 
@@ -189,11 +189,11 @@ int main()
 
                 if (line == "y")
                 {
-                    cout << "Please provide a priority level for this book. This value should be an integer between 0 and 100." << endl;
+                    cout << "Please provide a priority level for this book. This value should be an integer between 0 and 100, with higher values indicting greater priority." << endl;
 
                     getline(cin, line);
                     priority = stoi(line);
-                    booklibrary.insertBook(recbook[0], recbook[1], recbook[2], recbook[4], recbook[3], priority);
+                    booklibrary.insertBook(recbook[0], recbook[1], recbook[2], recbook[4], recbook[3], recbook[5], priority);
                     cout << "Book succesfully added to library." << endl;
                 }
             }
@@ -207,17 +207,20 @@ int main()
                 cout << "b. Top Book" << endl;
                 cout << "c. Remove Book" << endl;
                 cout << "d. Examine Book" << endl;
-                cout << "e. Exit Library" << endl;
+                cout << "e. Add Book" << endl;
+                cout << "f. Exit Library" << endl;
                 cout << "\n";
 
                 getline(cin, line);
                 if (line == "a")
                 {
+                    cout << "Your Library: \n" << endl;
                     booklibrary.viewLibrary();
                     cout << "\n";
                 }
                 else if (line == "b")
                 {
+                    cout << "Highest priority book(s): \n" << endl;
                     booklibrary.topBook();
                     cout << "\n";
                 }
@@ -255,6 +258,55 @@ int main()
                 }
                 else if (line == "e")
                 {
+                    cout << "Please provide the title and author of the book you wish to add (Title, Author)." << endl;
+                    getline(cin, line);
+                    int space = line.rfind(' ');
+                    string title = line.substr(0, space - 1);
+                    string author = line.substr(space + 1);
+                    string id = title + " " + author;
+                    vector <string> details = bookgraph.getAttributes(id);
+                    if (!details.empty())
+                    {
+                        cout << "Please provide a priority level for this book. This value should be an integer between 0 and 100, with higher values indicating greater priority." << endl;
+                        getline(cin, line);
+                        booklibrary.insertBook(title, author, details[1], details[3], details[2], details[4], stoi(line));
+                        cout << "Book succesfully added to library." << endl;
+                        cout << "\n";
+                    }
+                    else
+                    {
+                        cout << "This book does not exist within our database. Do you wish to manually provide additional information about the book? (y/n)" << endl;
+                        getline(cin, line);
+                        if (line == "y")
+                        {
+                            cout << "Please provide the following information: " << endl;
+                            cout << "Genre: ";
+                            getline(cin, line);
+                            string genre = line;
+                            cout << "Publisher: ";
+                            getline(cin, line);
+                            string publisher = line;
+                            cout << "Publication Year: ";
+                            getline(cin, line);
+                            string year = line;
+                            cout << "Description: ";
+                            getline(cin, line);
+                            string description = line;
+                            cout << "Manual entry complete. What is the priority level of this book?" << endl;
+                            getline(cin, line);
+                            booklibrary.insertBook(title, author, genre, year, publisher, description, stoi(line));
+                            cout << "Book successfully added to library" << endl;
+                            cout << "\n";
+                        }
+                        else
+                        {
+                            // pass
+                        }
+
+                    }
+                }
+                else if (line == "f")
+                {
                     // Exit library menu, do nothing
                 }
             }
@@ -263,7 +315,7 @@ int main()
         {
             open = false;
         }
-        cout << "\n\n";
+        cout << "\n";
         cout << "Menu" << endl;
         cout << "1. Book Search" << endl;
         cout << "2. Book Recommendation Engine" << endl;

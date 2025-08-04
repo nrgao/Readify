@@ -93,9 +93,6 @@ int main()
         bookgraph.insert(book.title, book.authors, book.category, to_string(book.yearPublished), book.publisher, book.description);
     }
 
-    Book thing = books[0];
-    booklibrary.insertBook(thing.title, thing.authors, thing.category, to_string(thing.yearPublished), thing.publisher, thing.description, 100);
-    booklibrary.insertBook("bob", "bob", "bob", "1000", "bob", "",100);
     cout << "\n";
     cout << "Welcome to Readify, your personal book storage and recommendation tool!" << endl;
     cout << "\n";
@@ -123,6 +120,7 @@ int main()
             if (bookdetails.empty())
             {
                 cout << "Unfortunately, the provided book is not in our database.";
+                cout << "\n";
             }
             else
             {
@@ -200,7 +198,7 @@ int main()
 
         }
         else if (line == "3") {
-            while (line != "e")
+            while (line != "f")
             {
                 cout << "Library Options:" << endl;
                 cout << "a. View Books" << endl;

@@ -126,7 +126,7 @@ bool library::examineBook(string title, string author)
     if (bookGraph.find(id) != bookGraph.end())
     {
         vector<pair<string, double>> compare = bookGraph[id];
-        if (compare.size() > 1)
+        if (compare.size() > 3)
         {
             cout << "Title: " << title << endl;
             cout << "Author: " << attributes[id][0] << endl;

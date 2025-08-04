@@ -7,7 +7,7 @@
 #include <ostream>
 #include <algorithm>
 
-void library::insertBook(string title, string author, string genre, string date, string publisher, int priority)
+void library::insertBook(string title, string author, string genre, string date, string publisher, string description, int priority)
 {
     if (priorityCounter.find(priority) == priorityCounter.end())
     {
@@ -48,7 +48,7 @@ void library::insertBook(string title, string author, string genre, string date,
 
     string uniqueBook = title + " " + author;
     bookToPriority[uniqueBook] = priority;
-    attributes[uniqueBook] = {author, genre, publisher, date};
+    attributes[uniqueBook] = {author, genre, publisher, date, description};
 
     if (bookGraph.find(uniqueBook) == bookGraph.end())
     {
@@ -123,7 +123,8 @@ bool library::examineBook(string title, string author)
     int least = 100;
     int maxindex;
     int minindex;
-    if (bookGraph.find(id) != bookGraph.end()) {
+    if (bookGraph.find(id) != bookGraph.end())
+    {
         vector<pair<string, double>> compare = bookGraph[id];
         if (compare.size() > 1)
         {
@@ -132,6 +133,12 @@ bool library::examineBook(string title, string author)
             cout << "Genre: " << attributes[id][1] << endl;
             cout << "Publisher: " << attributes[id][2] << endl;
             cout << "Publication Year: " << attributes[id][3] << endl;
+            if (attributes[id][4].length() != 0)
+            {
+                cout << "Description: " << attributes[id][4] << endl;
+            }
+            else
+                cout << "Description: N/A" << endl;
 
             for (int i = 0; i < compare.size(); i++)
             {
@@ -139,8 +146,12 @@ bool library::examineBook(string title, string author)
                 double simscore = compare[i].second;
                 if (simscore > most)
                 {
-                    most = simscore;
-                    maxindex = i;
+                    if (id != book)
+                    {
+                        most = simscore;
+                        maxindex = i;
+                    }
+
                 }
                 if (simscore < least)
                 {
@@ -159,7 +170,9 @@ bool library::examineBook(string title, string author)
             string differenttitle = leastsimilar.substr(0, space);
             string differentauthor = leastsimilar.substr(space + 1);
 
-            // finish formatting and printing
+            cout << "\n";
+            cout << "Most similar book in your library: " << similartitle << ", " << similarauthor << endl;
+            cout << "Least similar book in your library: " << differenttitle << ", " << differentauthor << endl;
 
         }
         else
@@ -178,12 +191,13 @@ bool library::examineBook(string title, string author)
 bool library::removeBook(string title, string author)
 {
     /*/
-    map<string, vector<string>> bookToAuthor;
-    map<int, vector<pair<string, string>>> priorityToBook;
-    map<string, int> bookToPriority;
-    map<string, vector<pair<string, double>> > bookGraph;
-    vector<int> maxHeap;
-    map<string, vector<string>> attributes;
+    Delete book from the following data structures:
+    map<string, vector<string>> bookToAuthor
+    map<int, vector<pair<string, string>>> priorityToBook
+    map<string, int> bookToPriority
+    map<string, vector<pair<string, double>> > bookGraph
+    vector<int> maxHeap
+    map<string, vector<string>> attributes
     /*/
 
     if (attributes.find(title + " " + author) != attributes.end())

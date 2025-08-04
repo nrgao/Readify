@@ -22,7 +22,7 @@ class library
     map<string, vector<string>> attributes;
 
     public:
-    void insertBook(string title, string author, string genre, string date, string publisher, int priority);
+    void insertBook(string title, string author, string genre, string date, string publisher, string description, int priority);
 
     void viewLibrary();
 

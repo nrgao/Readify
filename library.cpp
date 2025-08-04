@@ -7,8 +7,9 @@
 #include <ostream>
 #include <algorithm>
 
-void library::insertBook(string title, string author, string genre, string date, string publisher, string description, int priority)
+void Library::insertBook(string title, string author, string genre, string date, string publisher, string description, int priority)
 {
+    // keep track of number of books of certain priority
     if (priorityCounter.find(priority) == priorityCounter.end())
     {
         priorityCounter[priority] = 1;
@@ -17,6 +18,7 @@ void library::insertBook(string title, string author, string genre, string date,
     {
         priorityCounter[priority] += 1;
     }
+    // add to bookToAuthor
     if (bookToAuthor.find(title) == bookToAuthor.end())
     {
         bookToAuthor[title] = {author};
@@ -25,7 +27,7 @@ void library::insertBook(string title, string author, string genre, string date,
     {
         bookToAuthor[title].push_back(author);
     }
-
+    // add to priorityToBook
     if (priorityToBook.find(priority) == priorityToBook.end())
     {
         priorityToBook[priority] = {make_pair(title, author)};
@@ -38,6 +40,7 @@ void library::insertBook(string title, string author, string genre, string date,
     // Insert priority value into maxHeap
     maxHeap.push_back(priority);
     int index = maxHeap.size() - 1;
+    // heapify by comparing to parent until correct position
     while (index > 0 && maxHeap[index] > maxHeap[index / 2])
     {
         int temp = maxHeap[index];
@@ -45,35 +48,35 @@ void library::insertBook(string title, string author, string genre, string date,
         maxHeap[index / 2] = temp;
         index /= 2;
     }
-
+    // get unique book id
     string uniqueBook = title + " " + author;
     bookToPriority[uniqueBook] = priority;
     attributes[uniqueBook] = {author, genre, publisher, date, description};
 
-    if (bookGraph.find(uniqueBook) == bookGraph.end())
+    if (bookGraph.find(uniqueBook) == bookGraph.end()) // add book to graph
     {
         bookGraph[uniqueBook] = {};
-        for (auto it = bookGraph.begin(); it != bookGraph.end(); it++)
+        for (auto it = bookGraph.begin(); it != bookGraph.end(); it++) // compute edge weights
         {
             string key = it->first;
             vector <pair<string, double>> &value = it -> second;
             vector<string> details = attributes[key];
             vector<string> current = attributes[uniqueBook];
             double simscore = 0;
-            if (details[0] == current[0])
+            if (details[0] == current[0]) // shared author
             {
                 simscore += 7;
             }
-            if (details[1] == current[1])
+            if (details[1] == current[1]) // shared genre
             {
                 simscore += 10;
             }
-            if (details[2] == current[2])
+            if (details[2] == current[2]) // shared publisher
             {
                 simscore += 1;
             }
 
-            int timediff = abs(stoi(details[3]) - stoi(current[3]));
+            int timediff = abs(stoi(details[3]) - stoi(current[3])); // time difference between publication years
 
             simscore -= timediff / 10.0;
 
@@ -85,11 +88,11 @@ void library::insertBook(string title, string author, string genre, string date,
 
 }
 
-void library::topBook()
+void Library::topBook()
 {
-    if (!maxHeap.empty())
+    if (!maxHeap.empty()) // if some books in library
     {
-        vector<pair<string, string>> books = priorityToBook[maxHeap[0]];
+        vector<pair<string, string>> books = priorityToBook[maxHeap[0]]; // map back to book after getting priority value
         for (int i = 0; i < books.size(); i++)
         {
             cout << books[i].first << ", " << books[i].second << endl;
@@ -102,10 +105,10 @@ void library::topBook()
 
 }
 
-void library::viewLibrary()
+void Library::viewLibrary()
 {
     int counter = 1;
-    for (auto it = bookToPriority.begin(); it != bookToPriority.end(); it++)
+    for (auto it = bookToPriority.begin(); it != bookToPriority.end(); it++) // go through entire library
     {
         string book = it -> first;
         int index = book.rfind(' ');
@@ -116,17 +119,17 @@ void library::viewLibrary()
     }
 }
 
-bool library::examineBook(string title, string author)
+bool Library::examineBook(string title, string author)
 {
     string id = title + " " + author;
     int most = -100;
     int least = 100;
     int maxindex;
     int minindex;
-    if (bookGraph.find(id) != bookGraph.end())
+    if (bookGraph.find(id) != bookGraph.end()) // if book exists
     {
-        vector<pair<string, double>> compare = bookGraph[id];
-        if (compare.size() > 3)
+        vector<pair<string, double>> compare = bookGraph[id]; // get edge weights
+        if (compare.size() > 3) // if enough books, also provide similar and different books
         {
             cout << "Title: " << title << endl;
             cout << "Author: " << attributes[id][0] << endl;
@@ -140,7 +143,7 @@ bool library::examineBook(string title, string author)
             else
                 cout << "Description: N/A" << endl;
 
-            for (int i = 0; i < compare.size(); i++)
+            for (int i = 0; i < compare.size(); i++) // find max and min simscores
             {
                 string book = compare[i].first;
                 double simscore = compare[i].second;
@@ -149,17 +152,17 @@ bool library::examineBook(string title, string author)
                     if (id != book)
                     {
                         most = simscore;
-                        maxindex = i;
+                        maxindex = i; // index of max simscore
                     }
 
                 }
                 if (simscore < least)
                 {
                     least = simscore;
-                    minindex = i;
+                    minindex = i; // index of least minscore
                 }
             }
-
+            // format the most and least similar books for printing
             string mostsimilar = compare[maxindex].first;
             string leastsimilar = compare[minindex].first;
 
@@ -175,7 +178,7 @@ bool library::examineBook(string title, string author)
             cout << "Least similar book in your library: " << differenttitle << ", " << differentauthor << endl;
 
         }
-        else
+        else // print attributes
         {
             cout << "Title: " << title << endl;
             cout << "Author: " << attributes[id][0] << endl;
@@ -188,7 +191,7 @@ bool library::examineBook(string title, string author)
     return false;
 }
 
-bool library::removeBook(string title, string author)
+bool Library::removeBook(string title, string author)
 {
     /*/
     Delete book from the following data structures:
@@ -203,7 +206,7 @@ bool library::removeBook(string title, string author)
     if (attributes.find(title + " " + author) != attributes.end())
     {
         bookToAuthor[title].erase(remove(bookToAuthor[title].begin(), bookToAuthor[title].end(), author), bookToAuthor[title].end());
-        for (auto it = priorityToBook.begin(); it != priorityToBook.end(); it++)
+        for (auto it = priorityToBook.begin(); it != priorityToBook.end(); it++) // remove from priority map
         {
             vector<pair<string, string>> &books = it -> second;
             for (auto it2 = books.begin(); it2 != books.end();)
@@ -222,16 +225,16 @@ bool library::removeBook(string title, string author)
         string id = title + " " + author;
 
         int priority = bookToPriority[id];
-        vector<int> newHeap;
+        vector<int> newHeap; // set up new heap for rebuilding
 
         bookToPriority.erase(id);
         attributes.erase(id);
         bookGraph.erase(id);
 
-        for (auto it = bookGraph.begin(); it != bookGraph.end(); it++)
+        for (auto it = bookGraph.begin(); it != bookGraph.end(); it++) // remove from book graph
         {
             vector<pair<string, double>> &books = it -> second;
-            for (auto it2 = books.begin(); it2 != books.end();)
+            for (auto it2 = books.begin(); it2 != books.end();) // remove book from conneted edges
             {
                 if (it2 -> first == id)
                 {
@@ -245,11 +248,11 @@ bool library::removeBook(string title, string author)
         }
         priorityCounter[priority] -= 1;
         int counter = 0;
-        for (int i = 0; i < maxHeap.size(); i++)
+        for (int i = 0; i < maxHeap.size(); i++) // go through current heap
         {
-            if (maxHeap[i] != priority)
+            if (maxHeap[i] != priority) // if not removed element
             {
-                newHeap.push_back(maxHeap[i]);
+                newHeap.push_back(maxHeap[i]); // rebuild heap
                 int index = newHeap.size() - 1;
                 while (index > 0 && newHeap[index] > newHeap[index / 2])
                 {
@@ -259,7 +262,7 @@ bool library::removeBook(string title, string author)
                     index /= 2;
                 }
             }
-            else
+            else // otherwise check if enough of same priority values exist
             {
                 if (counter < priorityCounter[priority])
                 {
@@ -275,7 +278,7 @@ bool library::removeBook(string title, string author)
                 }
             }
         }
-        maxHeap = newHeap;
+        maxHeap = newHeap; // rebuild heap
         return true;
     }
 

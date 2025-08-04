@@ -84,15 +84,16 @@ int main()
         return 1;
     }
 
-    library booklibrary;
-    BookGraph bookgraph;
+    Library booklibrary; // set up library
+    BookGraph bookgraph; // set up partial graph/database
 
-    for (int i = 0; i < books.size(); i++)
+    for (int i = 0; i < books.size(); i++) // insert data from csv into bookgraph
     {
         Book book = books[i];
         bookgraph.insert(book.title, book.authors, book.category, to_string(book.yearPublished), book.publisher, book.description);
     }
 
+    // menu messages
     cout << "\n";
     cout << "Welcome to Readify, your personal book storage and recommendation tool!" << endl;
     cout << "\n";
@@ -102,14 +103,15 @@ int main()
     cout << "3. Open Library" << endl;
     cout << "4. Exit Application" << endl;
     cout << "\n";
+
     bool open = true;
     string line;
     int priority;
 
-    while (open)
+    while (open) // while user doesn't quit
     {
         getline(cin, line);
-        if (line == "1")
+        if (line == "1") // book search
         {
             cout << "Please input a book in the following format: (Title, Author)." << endl;
             getline(cin, line);
@@ -117,12 +119,12 @@ int main()
             string title = line.substr(0, space - 1);
             string author = line.substr(space + 1);
             vector<string> bookdetails = bookgraph.getAttributes(title + " " + author);
-            if (bookdetails.empty())
+            if (bookdetails.empty()) // if doesn't exist in database
             {
                 cout << "Unfortunately, the provided book is not in our database.";
                 cout << "\n";
             }
-            else
+            else // print book details
             {
                 cout << "Book Information: \n" << endl;
                 cout << "Title: " << title << endl;
@@ -145,7 +147,7 @@ int main()
             }
 
         }
-        else if (line == "2")
+        else if (line == "2") // recommend book
         {
             cout << "Please input a book in the following format: (Title, Author)." << endl;
             getline(cin, line);
@@ -156,11 +158,11 @@ int main()
             cout << "\n";
             cout << "Book Details:" << endl;
             cout << "\n";
-            if (recbook.empty())
+            if (recbook.empty()) // not in database
             {
                 cout << "Unfortunately, the provided book is not in our database.";
             }
-            else
+            else // print recommended book details
             {
                 for (int i = 0; i < recbook.size(); i++)
                     if (i == 0)
@@ -182,24 +184,27 @@ int main()
                         cout << "\n";
                     }
 
-                cout << "Add book to library? (y/n)" << endl;
+                cout << "Add book to library? (y/n)" << endl; // add to library prompt
                 getline(cin, line);
 
-                if (line == "y")
+                if (line == "y") // added to library, needs priority value
                 {
                     cout << "Please provide a priority level for this book. This value should be an integer between 0 and 100, with higher values indicting greater priority." << endl;
 
                     getline(cin, line);
                     priority = stoi(line);
+                    // insert into library
                     booklibrary.insertBook(recbook[0], recbook[1], recbook[2], recbook[4], recbook[3], recbook[5], priority);
                     cout << "Book succesfully added to library." << endl;
                 }
             }
 
         }
-        else if (line == "3") {
-            while (line != "f")
+        else if (line == "3") // view library
+        {
+            while (line != "f") // while library not closed
             {
+                // library menu
                 cout << "Library Options:" << endl;
                 cout << "a. View Books" << endl;
                 cout << "b. Top Book" << endl;
@@ -210,19 +215,19 @@ int main()
                 cout << "\n";
 
                 getline(cin, line);
-                if (line == "a")
+                if (line == "a") // view library
                 {
                     cout << "Your Library: \n" << endl;
                     booklibrary.viewLibrary();
                     cout << "\n";
                 }
-                else if (line == "b")
+                else if (line == "b") // print top priority book(s)
                 {
                     cout << "Highest priority book(s): \n" << endl;
                     booklibrary.topBook();
                     cout << "\n";
                 }
-                else if (line == "c")
+                else if (line == "c") // remove book
                 {
                     cout << "Please provide the title and author of the book you wish to remove in the following format: title, author" << endl;
                     getline(cin, line);
@@ -230,7 +235,7 @@ int main()
                     string title = line.substr(0, space - 1);
                     string author = line.substr(space + 1);
                     bool exist = booklibrary.removeBook(title, author);
-                    if (exist == false)
+                    if (exist == false) // book doesn't exist
                     {
                         cout << "This book does not exist within your library." << endl;
                     }
@@ -240,7 +245,7 @@ int main()
                     }
                     cout << "\n";
                 }
-                else if (line == "d")
+                else if (line == "d") // examine book in library
                 {
                     cout << "Please provide the title and author of the book you wish to examine in the following format: title, author" << endl;
                     getline(cin, line);
@@ -248,13 +253,13 @@ int main()
                     string title = line.substr(0, space - 1);
                     string author = line.substr(space + 1);
                     bool exist = booklibrary.examineBook(title, author);
-                    if (exist == false)
+                    if (exist == false) // book not in library
                     {
                         cout << "This book does not exist within your library." << endl;
                     }
                     cout << "\n";
                 }
-                else if (line == "e")
+                else if (line == "e") // add from library
                 {
                     cout << "Please provide the title and author of the book you wish to add (Title, Author)." << endl;
                     getline(cin, line);
@@ -271,11 +276,11 @@ int main()
                         cout << "Book succesfully added to library." << endl;
                         cout << "\n";
                     }
-                    else
+                    else // manual entry
                     {
                         cout << "This book does not exist within our database. Do you wish to manually provide additional information about the book? (y/n)" << endl;
                         getline(cin, line);
-                        if (line == "y")
+                        if (line == "y") // prompt for further info
                         {
                             cout << "Please provide the following information: " << endl;
                             cout << "Genre: ";
@@ -305,11 +310,11 @@ int main()
                 }
                 else if (line == "f")
                 {
-                    // Exit library menu, do nothing
+                    // pass
                 }
             }
         }
-        else if (line == "4")
+        else if (line == "4") // quit
         {
             open = false;
         }
